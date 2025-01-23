@@ -44,12 +44,26 @@ export default function MemeGenerator() {
 
   // Handle download button click
   function handleDownload() {
-    const link = document.createElement('a');
-    link.href = formData.imgUrl;
-    link.download = 'Custom Meme.jpeg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    fetch(formData.imgUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch the image');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'Custom_Meme.jpeg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading the image:', error);
+      });
   }
 
   return (
@@ -76,7 +90,11 @@ export default function MemeGenerator() {
         />
       </label>
       <h3>Your custom meme:</h3>
-      <img src={formData.imgUrl} alt="Meme template preview" />
+      <img
+        src={formData.imgUrl}
+        alt="Meme template preview"
+        data-test-id="meme-image"
+      />
       <button onClick={handleDownload}>Download</button>{' '}
       {/* Download Created Image */}
     </div>
