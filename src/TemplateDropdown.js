@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function TemplateDropdown() {
+export default function TemplateDropdown({ onTemplateChange }) {
   const [templates, setTemplates] = useState([]); // Initialize as empty array
   const [selectedTemplate, setSelectedTemplate] = useState(''); // Handle selected meme template
   useEffect(() => {
@@ -15,23 +15,32 @@ export default function TemplateDropdown() {
       .catch((error) => console.log(error));
   }, []);
 
-  const handleChange = (event) => {
-    setSelectedTemplate(event.target.value);
+  const selectTemplate = (event) => {
+    setSelectedTemplate(event.target.value); // Update template state
+    onTemplateChange(event.target.value);
     console.log(`Selected template: ${event.target.value}`);
   };
 
   return (
-    <div>
-      <select name="template" value={selectedTemplate} onChange={handleChange}>
+    <label>
+      Meme template:{' '}
+      <select
+        name="selectedTemplate"
+        value={selectedTemplate}
+        onChange={selectTemplate}
+      >
         <option value="" disabled>
           Select a template
         </option>
         {templates.map((template) => (
-          <option key={`template-${template.id}`} value={template.name}>
+          <option
+            key={`template-${template.id}-${template.lines}`}
+            value={template.id}
+          >
             {template.name}
           </option>
         ))}
       </select>
-    </div>
+    </label>
   );
 }
