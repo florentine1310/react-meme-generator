@@ -9,6 +9,9 @@ export default function MemeGenerator() {
     bottomText: '',
     imgUrl: `https://api.memegen.link/images/preview.jpg?layout=default&template=doge`,
   });
+
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Update imgUrl whenever formData changes
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function MemeGenerator() {
 
   // General form change handler
   function handleChange(event) {
-    const { name, value } = event.target;
+    const { name, value } = event.currentTarget;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -39,7 +42,6 @@ export default function MemeGenerator() {
       ...prevData,
       selectedTemplate: templateId,
     }));
-    console.log(`Template ID received in Meme Generator: ${templateId}`);
   }
 
   // Handle download button click
@@ -62,7 +64,7 @@ export default function MemeGenerator() {
         URL.revokeObjectURL(url);
       })
       .catch((error) => {
-        console.error('Error downloading the image:', error);
+        setErrorMessage(error);
       });
   }
 
@@ -97,6 +99,7 @@ export default function MemeGenerator() {
       />
       <button onClick={handleDownload}>Download</button>{' '}
       {/* Download Created Image */}
+      <p>{errorMessage}</p>
     </div>
   );
 }

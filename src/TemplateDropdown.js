@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 export default function TemplateDropdown({ onTemplateChange }) {
   const [templates, setTemplates] = useState([]); // Initialize as empty array
   const [selectedTemplate, setSelectedTemplate] = useState(''); // Handle selected meme template
+
+  const [errorMessage, setErrorMessage] = useState('');
+
   useEffect(() => {
     fetch('https://api.memegen.link/templates', {
       method: 'GET',
@@ -10,15 +13,13 @@ export default function TemplateDropdown({ onTemplateChange }) {
       .then((response) => response.json()) // Parse response as JSON
       .then((data) => {
         setTemplates(data); // Store the full array in state
-        console.log(data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => setErrorMessage(error));
   }, []);
 
   const selectTemplate = (event) => {
-    setSelectedTemplate(event.target.value); // Update template state
-    onTemplateChange(event.target.value);
-    console.log(`Selected template: ${event.target.value}`);
+    setSelectedTemplate(event.currentTarget.value); // Update template state
+    onTemplateChange(event.currentTarget.value);
   };
 
   return (
@@ -29,7 +30,7 @@ export default function TemplateDropdown({ onTemplateChange }) {
         value={selectedTemplate}
         onChange={selectTemplate}
       >
-        <option value="" disabled>
+        <option value="" hidden>
           Select a template
         </option>
         {templates.map((template) => (
@@ -41,6 +42,7 @@ export default function TemplateDropdown({ onTemplateChange }) {
           </option>
         ))}
       </select>
+      <p>{errorMessage}</p>
     </label>
   );
 }
